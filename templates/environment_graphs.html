@@ -13,17 +13,21 @@
 </div>
 
 <script>
-// Set up the two charts
+// Data from Flask
+const timestamps = {{ timestamps | tojson }};
+const tempData = {{ temp_data | tojson }};
+const humidData = {{ humid_data | tojson }};
+
 const temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
 const humidityCtx = document.getElementById('humidityChart').getContext('2d');
 
 const temperatureChart = new Chart(temperatureCtx, {
     type: 'line',
     data: {
-        labels: [], 
+        labels: timestamps, 
         datasets: [{
             label: 'Temperature (°C)',
-            data: [], 
+            data: tempData, 
             fill: false,
             borderColor: 'red',
             tension: 0.1
@@ -34,37 +38,16 @@ const temperatureChart = new Chart(temperatureCtx, {
 const humidityChart = new Chart(humidityCtx, {
     type: 'line',
     data: {
-        labels: [], 
+        labels: timestamps, 
         datasets: [{
             label: 'Humidity (%)',
-            data: [], 
+            data: humidData, 
             fill: false,
             borderColor: 'blue',
             tension: 0.1
         }]
     }
 });
-
-function fetchDataAndUpdateCharts() {
-        fetch('/data')
-            .then(response => response.json())
-            .then(data => {
-                updateCharts(data.temperature, data.humidity);
-            });
-    }
-
-    function updateCharts(temperature, humidity) {
-        temperatureChart.data.labels.push(new Date().toLocaleTimeString());
-        temperatureChart.data.datasets[0].data.push(temperature);
-        temperatureChart.update();
-
-        humidityChart.data.labels.push(new Date().toLocaleTimeString());
-        humidityChart.data.datasets[0].data.push(humidity);
-        humidityChart.update();
-    }
-
-    // Fetch new data every second
-    setInterval(fetchDataAndUpdateCharts, 1000);
 </script>
 </body>
 </html>
